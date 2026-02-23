@@ -26,6 +26,14 @@ const loginUser = async (req: Request, res: Response) => {
     try {
         const result = await AuthService.loginUserIntoDB(req.body)
 
+
+        res.cookie('token',result.token,{
+            secure :false,
+            httpOnly:true,
+            sameSite:'strict'
+        })
+
+
         sendResponse(res,{
             statusCode:201,
             success:true,

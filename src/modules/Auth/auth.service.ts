@@ -23,6 +23,13 @@ const loginUserIntoDB = async (payload: any) => {
       throw new Error("User not found")
    }
 
+
+   const isPasswordValid = await bcrypt.compare(payload.password, user.password);
+
+   if (!isPasswordValid) {
+      throw new Error("Invalid password")
+   }
+
    const userData = {
       id: user.id,
       name: user.name,
@@ -34,7 +41,7 @@ const loginUserIntoDB = async (payload: any) => {
 
    const token = jwt.sign(userData, 'secretKey', { expiresIn: '1d' })
 
-   return { token, user: userData }
+   return { token, user: userData } 
 
 }
 
