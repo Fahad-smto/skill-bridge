@@ -4,7 +4,8 @@ import { TutorService } from "./tutor.service";
 
 const createTutor = async (req: Request, res: Response) => {
     try {
-        const result = await TutorService.createTutorIntoDB(req.body)
+        console.log('controller',req?.user);
+        const result = await TutorService.createTutorIntoDB(req.body,req.user?.id);
        sendResponse(res,{
             statusCode:201,
             success:true,
