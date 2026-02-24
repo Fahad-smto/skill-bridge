@@ -1,10 +1,18 @@
 import "dotenv/config";
-import { PrismaPg } from '@prisma/adapter-pg'
-import { PrismaClient } from '../../generated/prisma/client'
+import pg from 'pg';
+const { Pool } = pg; // Destructure correctly
+import { PrismaPg } from '@prisma/adapter-pg';
+import { PrismaClient } from '@prisma/client';
 
-const connectionString = `${process.env.DATABASE_URL}`
+const connectionString = `${process.env.DATABASE_URL}`;
 
-const adapter = new PrismaPg({ connectionString })
-const prisma = new PrismaClient({ adapter })
+// SSL এনাবল করে Pool তৈরি করুন
+const pool = new Pool({ 
+  connectionString,
+  ssl: true // Neon DB এর জন্য এটি প্রয়োজন হতে পারে
+});
 
-export { prisma }
+const adapter = new PrismaPg(pool);
+const prisma = new PrismaClient({ adapter });
+
+export { prisma };
