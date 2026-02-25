@@ -1,8 +1,6 @@
 import express, { Application, Request, Response } from 'express';
 import cors from 'cors';
-import { AuthRoutes } from './modules/Auth/auth.route';
-import { TutorRoutes } from './modules/Tutor/tutor.route';
-
+import router from './routes';
 const app: Application = express();
 
 // parsers
@@ -10,8 +8,10 @@ app.use(express.json());
 app.use(cors());
 
 // application routes
-app.use('/api/v1',  AuthRoutes);
-app.use('/api/v1/tutor',  TutorRoutes);
+
+
+app.use('/api/v1', router);
+
 
 app.get('/', (req: Request, res: Response) => {
   res.send('Hello from Apollo Gears World!');
