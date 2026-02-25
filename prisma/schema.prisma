@@ -49,7 +49,7 @@ model TutorProfile {
 
   user         User       @relation(fields: [userId], references: [id], onDelete: Cascade)
   // categories   TutorCategory[]
-  // availability Availability[]
+  availability Availability[]
   // bookings     Booking[]  @relation("TutorBookings")
   // reviews      Review[]
 }
@@ -73,16 +73,16 @@ model TutorProfile {
 //   @@id([tutorProfileId, categoryId])
 // }
 
-// model Availability {
-//   id             Int      @id @default(autoincrement())
-//   tutorProfileId Int
-//   dayOfWeek      Int      // 0=Sun, 1=Mon ... 6=Sat
-//   startTime      String   // e.g. "09:00"
-//   endTime        String   // e.g. "17:00"
-//   createdAt      DateTime @default(now())
+model Availability {
+  id             Int      @id @default(autoincrement())
+  tutorProfileId Int
+  dayOfWeek      Int      // 0=Sun, 1=Mon ... 6=Sat
+  startTime      String   // e.g. "09:00"
+  endTime        String   // e.g. "17:00"
+  createdAt      DateTime @default(now())
 
-//   tutorProfile TutorProfile @relation(fields: [tutorProfileId], references: [id], onDelete: Cascade)
-// }
+  tutorProfile TutorProfile @relation(fields: [tutorProfileId], references: [id], onDelete: Cascade)
+}
 
 // model Booking {
 //   id             Int           @id @default(autoincrement())

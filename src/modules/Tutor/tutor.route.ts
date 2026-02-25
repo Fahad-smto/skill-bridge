@@ -3,7 +3,11 @@ import { TutorController } from './tutor.controller';
 import auth, { userRole } from '../../middlewares/auth';
 
 const router = express.Router();
-router.post('/',auth(userRole.TUTOR),TutorController.createTutor
-)
+
+// existing
+router.post('/', auth(userRole.TUTOR), TutorController.createTutor);
+
+// NEW — Set Availability
+router.put('/availability', auth(userRole.TUTOR), TutorController.setAvailability);
 
 export const TutorRoutes = router;
