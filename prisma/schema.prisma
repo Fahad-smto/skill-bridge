@@ -29,8 +29,8 @@ model User {
   updatedAt DateTime @updatedAt
 
   tutorProfile TutorProfile?
-  // bookingsAsStudent Booking[] @relation("StudentBookings")
-  // reviews      Review[]
+  bookingsAsStudent Booking[] @relation("StudentBookings")
+  reviews      Review[]
 }
 
 model TutorProfile {
@@ -48,30 +48,30 @@ model TutorProfile {
   updatedAt   DateTime @updatedAt
 
   user         User       @relation(fields: [userId], references: [id], onDelete: Cascade)
-  // categories   TutorCategory[]
+  categories   TutorCategory[]
   availability Availability[]
-  // bookings     Booking[]  @relation("TutorBookings")
-  // reviews      Review[]
+  bookings     Booking[]  @relation("TutorBookings")
+  reviews      Review[]
 }
 
-// model Category {
-//   id        Int      @id @default(autoincrement())
-//   name      String   @unique
-//   icon      String?
-//   createdAt DateTime @default(now())
+model Category {
+  id        Int      @id @default(autoincrement())
+  name      String   @unique
+  icon      String?
+  createdAt DateTime @default(now())
 
-//   tutors TutorCategory[]
-// }
+  tutors TutorCategory[]
+}
 
-// model TutorCategory {
-//   tutorProfileId Int
-//   categoryId     Int
+model TutorCategory {
+  tutorProfileId Int
+  categoryId     Int
 
-//   tutorProfile TutorProfile @relation(fields: [tutorProfileId], references: [id], onDelete: Cascade)
-//   category     Category     @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  tutorProfile TutorProfile @relation(fields: [tutorProfileId], references: [id], onDelete: Cascade)
+  category     Category     @relation(fields: [categoryId], references: [id], onDelete: Cascade)
 
-//   @@id([tutorProfileId, categoryId])
-// }
+  @@id([tutorProfileId, categoryId])
+}
 
 model Availability {
   id             Int      @id @default(autoincrement())
@@ -84,33 +84,33 @@ model Availability {
   tutorProfile TutorProfile @relation(fields: [tutorProfileId], references: [id], onDelete: Cascade)
 }
 
-// model Booking {
-//   id             Int           @id @default(autoincrement())
-//   studentId      Int
-//   tutorProfileId Int
-//   scheduledAt    DateTime
-//   duration       Int           // in minutes
-//   totalPrice     Float
-//   status         BookingStatus @default(CONFIRMED)
-//   note           String?
-//   createdAt      DateTime      @default(now())
-//   updatedAt      DateTime      @updatedAt
+model Booking {
+  id             Int           @id @default(autoincrement())
+  studentId      Int
+  tutorProfileId Int
+  scheduledAt    DateTime
+  duration       Int           // in minutes
+  totalPrice     Float
+  status         BookingStatus @default(CONFIRMED)
+  note           String?
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
 
-//   student      User         @relation("StudentBookings", fields: [studentId], references: [id])
-//   tutorProfile TutorProfile @relation("TutorBookings", fields: [tutorProfileId], references: [id])
-  // review       Review?s
-// }
+  student      User         @relation("StudentBookings", fields: [studentId], references: [id])
+  tutorProfile TutorProfile @relation("TutorBookings", fields: [tutorProfileId], references: [id])
+  review       Review?
+}
 
-// model Review {
-//   id             Int      @id @default(autoincrement())
-//   studentId      Int
-//   tutorProfileId Int
-//   bookingId      Int      @unique
-//   rating         Int      // 1-5
-//   comment        String?
-//   createdAt      DateTime @default(now())
+model Review {
+  id             Int      @id @default(autoincrement())
+  studentId      Int
+  tutorProfileId Int
+  bookingId      Int      @unique
+  rating         Int      // 1-5
+  comment        String?
+  createdAt      DateTime @default(now())
 
-//   student      User         @relation(fields: [studentId], references: [id])
-//   tutorProfile TutorProfile @relation(fields: [tutorProfileId], references: [id])
-//   booking      Booking      @relation(fields: [bookingId], references: [id])
-// }
+  student      User         @relation(fields: [studentId], references: [id])
+  tutorProfile TutorProfile @relation(fields: [tutorProfileId], references: [id])
+  booking      Booking      @relation(fields: [bookingId], references: [id])
+}
