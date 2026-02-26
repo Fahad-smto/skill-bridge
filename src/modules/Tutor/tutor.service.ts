@@ -1,5 +1,8 @@
- import { prisma } from "../../lib/prisma";
+import { prisma } from "../../lib/prisma";
 
+// ─────────────────────────────────────────
+// Create Tutor Profile
+// ─────────────────────────────────────────
 const createTutorIntoDB = async (payload: any, userId: number) => {
    const user = await prisma.user.findUnique({
       where: { id: userId },
@@ -44,16 +47,81 @@ const createTutorIntoDB = async (payload: any, userId: number) => {
 };
 
 // ─────────────────────────────────────────
-// NEW — Set Availability
+// Get My Profile
+// ─────────────────────────────────────────
+const getMyProfileFromDB = async (userId: number) => {
+
+   const profile = await prisma.tutorProfile.findUnique({
+      where: { userId },
+      include: {
+         user: {
+            select: {
+               id: true,
+               name: true,
+               email: true,
+               role: true,
+            }
+         },
+         availability: {
+            orderBy: { dayOfWeek: "asc" }
+         }
+      }
+   });
+
+   if (!profile) {
+      throw new Error('Tutor profile not found');
+   }
+
+   return profile;
+};
+
+// ─────────────────────────────────────────
+// Update Tutor Profile
+// ─────────────────────────────────────────
+const updateTutorProfileIntoDB = async (userId: number, payload: any) => {
+
+   // Check profile exists
+   const existingProfile = await prisma.tutorProfile.findUnique({
+      where: { userId }
+   });
+
+   if (!existingProfile) {
+      throw new Error('Tutor profile not found. Please create your profile first');
+   }
+
+   const result = await prisma.tutorProfile.update({
+      where: { userId },
+      data: {
+         bio: payload.bio,
+         hourlyRate: payload.hourlyRate,
+         experience: payload.experience,
+         location: payload.location,
+         imageUrl: payload.imageUrl,
+      },
+      include: {
+         user: {
+            select: {
+               name: true,
+               email: true,
+               role: true
+            }
+         },
+         availability: true,
+      }
+   });
+
+   return result;
+};
+
+// ─────────────────────────────────────────
+// Set Availability
 // ─────────────────────────────────────────
 const setAvailabilityIntoDB = async (userId: number, slots: any[]) => {
 
-   // Check slots are provided
    if (!slots || slots.length === 0) {
       throw new Error("At least one slot is required");
    }
 
-   // Validate each slot
    for (const slot of slots) {
       if (slot.dayOfWeek < 0 || slot.dayOfWeek > 6) {
          throw new Error("dayOfWeek must be 0 (Sun) to 6 (Sat)");
@@ -66,7 +134,6 @@ const setAvailabilityIntoDB = async (userId: number, slots: any[]) => {
       }
    }
 
-   // Check tutor profile exists
    const profile = await prisma.tutorProfile.findUnique({
       where: { userId },
    });
@@ -75,12 +142,10 @@ const setAvailabilityIntoDB = async (userId: number, slots: any[]) => {
       throw new Error("Please create your tutor profile first");
    }
 
-   // Delete old slots
    await prisma.availability.deleteMany({
       where: { tutorProfileId: profile.id },
    });
 
-   // Insert new slots
    await prisma.availability.createMany({
       data: slots.map((slot) => ({
          tutorProfileId: profile.id,
@@ -90,7 +155,6 @@ const setAvailabilityIntoDB = async (userId: number, slots: any[]) => {
       })),
    });
 
-   // Return saved availability
    const availability = await prisma.availability.findMany({
       where: { tutorProfileId: profile.id },
       orderBy: { dayOfWeek: "asc" },
@@ -101,5 +165,7 @@ const setAvailabilityIntoDB = async (userId: number, slots: any[]) => {
 
 export const TutorService = {
    createTutorIntoDB,
-   setAvailabilityIntoDB, // ← NEW
+   getMyProfileFromDB,       // ← NEW
+   updateTutorProfileIntoDB, // ← NEW
+   setAvailabilityIntoDB,
 };

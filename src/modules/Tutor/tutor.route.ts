@@ -4,10 +4,16 @@ import auth, { userRole } from '../../middlewares/auth';
 
 const router = express.Router();
 
-// existing
+// Create tutor profile
 router.post('/', auth(userRole.TUTOR), TutorController.createTutor);
 
-// NEW — Set Availability
+// Get my profile
+router.get('/me', auth(userRole.TUTOR), TutorController.getMyProfile);
+
+// Update my profile
+router.put('/me', auth(userRole.TUTOR), TutorController.updateTutorProfile);
+
+// Set availability
 router.put('/availability', auth(userRole.TUTOR), TutorController.setAvailability);
 
 export const TutorRoutes = router;
