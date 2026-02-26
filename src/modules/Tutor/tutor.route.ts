@@ -4,16 +4,14 @@ import auth, { userRole } from '../../middlewares/auth';
 
 const router = express.Router();
 
-// Create tutor profile
+// ✅ Public Routes — token লাগবে না
+router.get('/', TutorController.getAllTutors);
+router.get('/:id', TutorController.getTutorById);
+
+// 🔒 Private Routes — TUTOR token লাগবে
 router.post('/', auth(userRole.TUTOR), TutorController.createTutor);
-
-// Get my profile
 router.get('/me', auth(userRole.TUTOR), TutorController.getMyProfile);
-
-// Update my profile
 router.put('/me', auth(userRole.TUTOR), TutorController.updateTutorProfile);
-
-// Set availability
 router.put('/availability', auth(userRole.TUTOR), TutorController.setAvailability);
 
 export const TutorRoutes = router;
