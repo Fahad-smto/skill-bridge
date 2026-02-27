@@ -2,6 +2,7 @@ import { Router } from "express";
 import { AuthRoutes } from "../modules/Auth/auth.route";
 import { TutorRoutes } from "../modules/Tutor/tutor.route"; 
 import { BookingRoutes } from "../modules/Booking/booking.route";
+import { AdminRoutes } from "../modules/Admin/admin.route";
  
 
 
@@ -19,6 +20,10 @@ const routerManager =[
     {
         path:'/booking',
         route:BookingRoutes
+    },
+    {
+        path: '/admin',
+        route: AdminRoutes
     }
 ]
 
