@@ -216,11 +216,28 @@ const getAllTutorsFromDB = async () => {
    return tutors;
 };
 
+// ─────────────────────────────────────────
+// Get All Categories (Public)
+// ─────────────────────────────────────────
+const getAllCategoriesFromDB = async () => {
+
+   const categories = await prisma.category.findMany({
+      orderBy: { name: "asc" }
+   });
+
+   if (categories.length === 0) {
+      throw new Error('No categories found');
+   }
+
+   return categories;
+};
+
 export const TutorService = {
    createTutorIntoDB,
    getMyProfileFromDB,       // ← NEW
    updateTutorProfileIntoDB, // ← NEW
    setAvailabilityIntoDB,
    getAllTutorsFromDB,
-   getTutorByIdFromDB
+   getTutorByIdFromDB,
+   getAllCategoriesFromDB
 };
