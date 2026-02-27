@@ -3,6 +3,7 @@ import { AuthRoutes } from "../modules/Auth/auth.route";
 import { TutorRoutes } from "../modules/Tutor/tutor.route"; 
 import { BookingRoutes } from "../modules/Booking/booking.route";
 import { AdminRoutes } from "../modules/Admin/admin.route";
+import { ReviewRoutes } from "../modules/Review/review.route";
  
 
 
@@ -24,6 +25,10 @@ const routerManager =[
     {
         path: '/admin',
         route: AdminRoutes
+    },
+    {
+        path: '/review',
+        route: ReviewRoutes
     }
 ]
 
