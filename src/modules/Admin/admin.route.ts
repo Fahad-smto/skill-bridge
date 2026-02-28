@@ -4,7 +4,7 @@ import auth, { userRole } from '../../middlewares/auth';
 
 const router = express.Router();
 
-// 🔒 সব route এ ADMIN token লাগবে
+// 🔒   route ADMIN token  
 router.use(auth(userRole.ADMIN));
 
 // Users
