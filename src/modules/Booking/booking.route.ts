@@ -4,10 +4,10 @@ import auth, { userRole } from '../../middlewares/auth';
 
 const router = express.Router();
 
-// Student booking করবে
+// Student booking  
 router.post('/', auth(userRole.STUDENT), BookingController.createBooking);
 
-// Student & Tutor দুইজনেই নিজের bookings দেখবে
+// Student & Tutor bookings
 router.get('/', auth(userRole.STUDENT, userRole.TUTOR), BookingController.getMyBookings);
 
 // Single booking details

@@ -4,10 +4,10 @@ import auth, { userRole } from '../../middlewares/auth';
 
 const router = express.Router();
 
-// 🔒 Student only — review দিতে পারবে
+//   Student only — review  
 router.post('/', auth(userRole.STUDENT), ReviewController.createReview);
 
-// ✅ Public — যেকেউ tutor এর reviews দেখতে পারবে
+//   Public —  tutor  reviews  
 router.get('/tutor/:tutorProfileId', ReviewController.getTutorReviews);
 
 export const ReviewRoutes = router;
