@@ -5,12 +5,10 @@ import bcrypt from "bcrypt";
 export const secret = 'secretKey';
 
 // ─────────────────────────────────────────
-// Register Service
+// Register Service (টোকেন সহ)
 // ─────────────────────────────────────────
 const createUserIntoDB = async (payload: any) => {
-
    // Destructure only required fields
-   // This prevents extra fields like "status" from being sent to DB
    const { name, email, password, role } = payload;
 
    // Check all fields are provided
@@ -23,7 +21,7 @@ const createUserIntoDB = async (payload: any) => {
       throw new Error("Role must be STUDENT or TUTOR");
    }
 
-//  Check if email already exists
+   // Check if email already exists
    const existingUser = await prisma.user.findUnique({
       where: { email }
    });
@@ -41,20 +39,31 @@ const createUserIntoDB = async (payload: any) => {
          email,
          password: hashPassword,
          role,
-        
       }
    });
 
    // Remove password before returning
    const { password: _, ...userWithoutPassword } = result;
-   return userWithoutPassword;
+
+   // ✅ টোকেন জেনারেট করুন (লগইনের মতোই)
+   const userData = {
+      id: userWithoutPassword.id,
+      name: userWithoutPassword.name,
+      email: userWithoutPassword.email,
+      role: userWithoutPassword.role,
+   }
+
+   // Generate JWT token
+   const token = jwt.sign(userData, secret, { expiresIn: '1d' });
+
+   // ✅ টোকেন এবং ইউজার ডাটা রিটার্ন করুন
+   return { token, user: userData };
 }
 
 // ─────────────────────────────────────────
-// Login Service
+// Login Service (ইতিমধ্যে ঠিক আছে)
 // ─────────────────────────────────────────
 const loginUserIntoDB = async (payload: any) => {
-
    const { email, password } = payload;
 
    // Check all fields are provided
