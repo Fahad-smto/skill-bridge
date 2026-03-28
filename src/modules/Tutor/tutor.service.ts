@@ -1,24 +1,17 @@
 import { prisma } from "../../lib/prisma";
 
-// ─────────────────────────────────────────
-// Create Tutor Profile
-// ─────────────────────────────────────────
 const createTutorIntoDB = async (payload: any, userId: number) => {
    const user = await prisma.user.findUnique({
       where: { id: userId },
    });
 
-   if (!user) {
-      throw new Error('User not found');
-   }
+   if (!user) throw new Error('User not found');
 
    const existingProfile = await prisma.tutorProfile.findUnique({
       where: { userId: userId }
    });
 
-   if (existingProfile) {
-      throw new Error('Tutor profile already exists for this user');
-   }
+   if (existingProfile) throw new Error('Tutor profile already exists for this user');
 
    const result = await prisma.tutorProfile.create({
       data: {
@@ -31,14 +24,11 @@ const createTutorIntoDB = async (payload: any, userId: number) => {
          isApproved: payload.isApproved ?? true,
          avgRating: 0,
          totalReviews: 0,
+        
       },
       include: {
          user: {
-            select: {
-               name: true,
-               email: true,
-               role: true
-            }
+            select: { name: true, email: true, role: true }
          }
       }
    });
@@ -46,48 +36,28 @@ const createTutorIntoDB = async (payload: any, userId: number) => {
    return result;
 };
 
-// ─────────────────────────────────────────
-// Get My Profile
-// ─────────────────────────────────────────
 const getMyProfileFromDB = async (userId: number) => {
-
    const profile = await prisma.tutorProfile.findUnique({
       where: { userId },
       include: {
          user: {
-            select: {
-               id: true,
-               name: true,
-               email: true,
-               role: true,
-            }
+            select: { id: true, name: true, email: true, role: true }
          },
-         availability: {
-            orderBy: { dayOfWeek: "asc" }
-         }
+         availability: { orderBy: { dayOfWeek: "asc" } },
+         categories: { include: { category: true } }
       }
    });
 
-   if (!profile) {
-      throw new Error('Tutor profile not found');
-   }
-
+   if (!profile) throw new Error('Tutor profile not found');
    return profile;
 };
 
-// ─────────────────────────────────────────
-// Update Tutor Profile
-// ─────────────────────────────────────────
 const updateTutorProfileIntoDB = async (userId: number, payload: any) => {
-
-   // Check profile exists
    const existingProfile = await prisma.tutorProfile.findUnique({
       where: { userId }
    });
 
-   if (!existingProfile) {
-      throw new Error('Tutor profile not found. Please create your profile first');
-   }
+   if (!existingProfile) throw new Error('Tutor profile not found');
 
    const result = await prisma.tutorProfile.update({
       where: { userId },
@@ -100,51 +70,29 @@ const updateTutorProfileIntoDB = async (userId: number, payload: any) => {
       },
       include: {
          user: {
-            select: {
-               name: true,
-               email: true,
-               role: true
-            }
+            select: { name: true, email: true, role: true }
          },
          availability: true,
+         categories: { include: { category: true } }
       }
    });
 
    return result;
 };
 
-// ─────────────────────────────────────────
-// Set Availability
-// ─────────────────────────────────────────
 const setAvailabilityIntoDB = async (userId: number, slots: any[]) => {
-
-   if (!slots || slots.length === 0) {
-      throw new Error("At least one slot is required");
-   }
+   if (!slots || slots.length === 0) throw new Error("At least one slot is required");
 
    for (const slot of slots) {
-      if (slot.dayOfWeek < 0 || slot.dayOfWeek > 6) {
-         throw new Error("dayOfWeek must be 0 (Sun) to 6 (Sat)");
-      }
-      if (!slot.startTime || !slot.endTime) {
-         throw new Error("Each slot must have startTime and endTime");
-      }
-      if (slot.startTime >= slot.endTime) {
-         throw new Error("startTime must be before endTime");
-      }
+      if (slot.dayOfWeek < 0 || slot.dayOfWeek > 6) throw new Error("dayOfWeek must be 0 (Sun) to 6 (Sat)");
+      if (!slot.startTime || !slot.endTime) throw new Error("Each slot must have startTime and endTime");
+      if (slot.startTime >= slot.endTime) throw new Error("startTime must be before endTime");
    }
 
-   const profile = await prisma.tutorProfile.findUnique({
-      where: { userId },
-   });
+   const profile = await prisma.tutorProfile.findUnique({ where: { userId } });
+   if (!profile) throw new Error("Please create your tutor profile first");
 
-   if (!profile) {
-      throw new Error("Please create your tutor profile first");
-   }
-
-   await prisma.availability.deleteMany({
-      where: { tutorProfileId: profile.id },
-   });
+   await prisma.availability.deleteMany({ where: { tutorProfileId: profile.id } });
 
    await prisma.availability.createMany({
       data: slots.map((slot) => ({
@@ -155,60 +103,47 @@ const setAvailabilityIntoDB = async (userId: number, slots: any[]) => {
       })),
    });
 
-   const availability = await prisma.availability.findMany({
+   return await prisma.availability.findMany({
       where: { tutorProfileId: profile.id },
       orderBy: { dayOfWeek: "asc" },
    });
-
-   return availability;
 };
 
-// ─────────────────────────────────────────
-// Get Tutor By ID (Public)
-// ─────────────────────────────────────────
+// ✅ categories include করা হয়েছে
 const getTutorByIdFromDB = async (id: number) => {
-
    const tutor = await prisma.tutorProfile.findUnique({
       where: { id },
       include: {
          user: {
-            select: {
-               id: true,
-               name: true,
-               email: true,
-            }
+            select: { id: true, name: true, email: true }
          },
-         availability: {
-            orderBy: { dayOfWeek: "asc" }
+         availability: { orderBy: { dayOfWeek: "asc" } },
+         categories: { include: { category: true } },  // ← NEW
+         reviews: {                                      // ← NEW
+            include: {
+               student: {
+                  select: { id: true, name: true }
+               }
+            },
+            orderBy: { createdAt: "desc" }
          }
       }
    });
 
-   if (!tutor) {
-      throw new Error('Tutor not found');
-   }
-
+   if (!tutor) throw new Error('Tutor not found');
    return tutor;
 };
 
-// ─────────────────────────────────────────
-// Get All Tutors (Public)
-// ─────────────────────────────────────────
+// ✅ categories include করা হয়েছে
 const getAllTutorsFromDB = async () => {
-
    const tutors = await prisma.tutorProfile.findMany({
-      where: {
-         isApproved: true
-      },
+      where: { isApproved: true },
       include: {
          user: {
-            select: {
-               id: true,
-               name: true,
-               email: true,
-            }
+            select: { id: true, name: true, email: true }
          },
          availability: true,
+         categories: { include: { category: true } },  // ← NEW
       },
       orderBy: { avgRating: "desc" }
    });
@@ -216,28 +151,21 @@ const getAllTutorsFromDB = async () => {
    return tutors;
 };
 
-// ─────────────────────────────────────────
-// Get All Categories (Public)
-// ─────────────────────────────────────────
 const getAllCategoriesFromDB = async () => {
-
    const categories = await prisma.category.findMany({
       orderBy: { name: "asc" }
    });
 
-   if (categories.length === 0) {
-      throw new Error('No categories found');
-   }
-
+   if (categories.length === 0) throw new Error('No categories found');
    return categories;
 };
 
 export const TutorService = {
    createTutorIntoDB,
-   getMyProfileFromDB,       // ← NEW
-   updateTutorProfileIntoDB, // ← NEW
+   getMyProfileFromDB,
+   updateTutorProfileIntoDB,
    setAvailabilityIntoDB,
    getAllTutorsFromDB,
    getTutorByIdFromDB,
-   getAllCategoriesFromDB
+   getAllCategoriesFromDB,
 };
