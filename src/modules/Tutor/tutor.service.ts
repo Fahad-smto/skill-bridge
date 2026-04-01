@@ -4,7 +4,6 @@ const createTutorIntoDB = async (payload: any, userId: number) => {
    const user = await prisma.user.findUnique({
       where: { id: userId },
    });
-
    if (!user) throw new Error('User not found');
 
    const existingProfile = await prisma.tutorProfile.findUnique({
@@ -24,11 +23,20 @@ const createTutorIntoDB = async (payload: any, userId: number) => {
          isApproved: payload.isApproved ?? true,
          avgRating: 0,
          totalReviews: 0,
-        
+
+         // ✅ categoryIds থেকে categories create করো
+         categories: payload.categoryIds?.length > 0 ? {
+            create: payload.categoryIds.map((categoryId: number) => ({
+               categoryId,
+            }))
+         } : undefined,
       },
       include: {
          user: {
             select: { name: true, email: true, role: true }
+         },
+         categories: {
+            include: { category: true }
          }
       }
    });
