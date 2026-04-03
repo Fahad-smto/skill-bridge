@@ -1,7 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import jwt, { JwtPayload } from "jsonwebtoken";
-import { secret } from "../modules/Auth/auth.service";
-import { prisma } from "../lib/prisma";
+ import { prisma } from "../lib/prisma";
 
 
 export enum userRole {
@@ -25,7 +24,7 @@ const auth = (...roles:userRole[]) => {
                 })
             }
 
-            const decodedToken = jwt.verify(token, secret) as JwtPayload
+            const decodedToken = jwt.verify(token, process.env.JWT_SECRET as string ) as JwtPayload
             console.log(decodedToken);
             const userData = await prisma.user.findUnique({
                 where: {
