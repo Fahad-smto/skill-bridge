@@ -5,7 +5,25 @@ import { AdminService } from "./admin.service";
 // ─────────────────────────────────────────
 // GET /api/v1/admin/users
 // ─────────────────────────────────────────
+const getAllUsers = async (req: Request, res: Response) => {
+   try {
+      const result = await AdminService.getAllUsersFromDB();
 
+      sendResponse(res, {
+         statusCode: 200,
+         success: true,
+         message: 'Users fetched successfully',
+         data: result,
+      });
+   } catch (error: any) {
+      sendResponse(res, {
+         statusCode: 500,
+         success: false,
+         message: error.message || 'Something went wrong',
+         data: null,
+      });
+   }
+};
 
 // ─────────────────────────────────────────
 // PATCH /api/v1/admin/users/:id
