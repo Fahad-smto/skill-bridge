@@ -91,35 +91,7 @@ const getBookingById = async (req: Request, res: Response) => {
 // ─────────────────────────────────────────
 // PATCH /api/v1/booking/:id/status
 // ─────────────────────────────────────────
-const updateBookingStatus = async (req: Request, res: Response) => {
-   try {
-      const bookingId = parseInt(req.params.id as string);
-      const userId = req.user?.id;
-      const role = req.user?.role;
-      const { status } = req.body;
 
-      const result = await BookingService.updateBookingStatusIntoDB(
-         bookingId,
-         userId,
-         role,
-         status
-      );
-
-      sendResponse(res, {
-         statusCode: 200,
-         success: true,
-         message: `Booking ${status.toLowerCase()} successfully`,
-         data: result,
-      });
-   } catch (error: any) {
-      sendResponse(res, {
-         statusCode: 500,
-         success: false,
-         message: error.message || 'Something went wrong',
-         data: null,
-      });
-   }
-};
 
 
 
