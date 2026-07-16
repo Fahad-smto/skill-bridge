@@ -5,26 +5,7 @@ import { BookingService } from "./booking.service";
 // ─────────────────────────────────────────
 // POST /api/v1/booking
 // ─────────────────────────────────────────
-const createBooking = async (req: Request, res: Response) => {
-   try {
-      const userId = req.user?.id;
-      const result = await BookingService.createBookingIntoDB(userId, req.body);
 
-      sendResponse(res, {
-         statusCode: 201,
-         success: true,
-         message: 'Booking created successfully',
-         data: result,
-      });
-   } catch (error: any) {
-      sendResponse(res, {
-         statusCode: 500,
-         success: false,
-         message: error.message || 'Something went wrong',
-         data: null,
-      });
-   }
-};
 
 // ─────────────────────────────────────────
 // GET /api/v1/booking
