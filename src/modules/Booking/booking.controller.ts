@@ -55,7 +55,38 @@ const getMyBookings = async (req: Request, res: Response) => {
 // ─────────────────────────────────────────
 // GET /api/v1/booking/:id
 // ─────────────────────────────────────────
+const getBookingById = async (req: Request, res: Response) => {
+   try {
+      const bookingId = parseInt(req.params.id as string);
+      const userId = req.user?.id;
+      const role = req.user?.role;
 
+      if (isNaN(bookingId)) {
+         return sendResponse(res, {
+            statusCode: 400,
+            success: false,
+            message: 'Invalid booking id',
+            data: null,
+         });
+      }
+
+      const result = await BookingService.getBookingByIdFromDB(bookingId, userId, role);
+
+      sendResponse(res, {
+         statusCode: 200,
+         success: true,
+         message: 'Booking fetched successfully',
+         data: result,
+      });
+   } catch (error: any) {
+      sendResponse(res, {
+         statusCode: 404,
+         success: false,
+         message: error.message || 'Something went wrong',
+         data: null,
+      });
+   }
+};
 
 // ─────────────────────────────────────────
 // PATCH /api/v1/booking/:id/status
