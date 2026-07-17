@@ -1,8 +1,4 @@
-import express from 'express';
-import { AdminController } from './admin.controller';
-import auth, { userRole } from '../../middlewares/auth';
 
-const router = express.Router();
 
 // 🔒   route ADMIN token  
 router.use(auth(userRole.ADMIN));
