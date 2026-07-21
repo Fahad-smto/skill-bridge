@@ -49,7 +49,13 @@ const updateUserStatus = async (req: Request, res: Response) => {
          message: `User ${req.body.isBanned ? 'banned' : 'unbanned'} successfully`,
          data: result,
       });
- 
+   } catch (error: any) {
+      sendResponse(res, {
+         statusCode: 500,
+         success: false,
+         message: error.message || 'Something went wrong',
+         data: null,
+      });
    }
 };
 
