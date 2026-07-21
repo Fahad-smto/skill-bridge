@@ -28,7 +28,36 @@ const getAllUsers = async (req: Request, res: Response) => {
 // ─────────────────────────────────────────
 // PATCH /api/v1/admin/users/:id
 // ─────────────────────────────────────────
+const updateUserStatus = async (req: Request, res: Response) => {
+   try {
+      const userId = parseInt(req.params.id as string);
 
+      if (isNaN(userId)) {
+         return sendResponse(res, {
+            statusCode: 400,
+            success: false,
+            message: 'Invalid user id',
+            data: null,
+         });
+      }
+
+      const result = await AdminService.updateUserStatusIntoDB(userId, req.body);
+
+      sendResponse(res, {
+         statusCode: 200,
+         success: true,
+         message: `User ${req.body.isBanned ? 'banned' : 'unbanned'} successfully`,
+         data: result,
+      });
+   } catch (error: any) {
+      sendResponse(res, {
+         statusCode: 500,
+         success: false,
+         message: error.message || 'Something went wrong',
+         data: null,
+      });
+   }
+};
 
 // ─────────────────────────────────────────
 // GET /api/v1/admin/categories
