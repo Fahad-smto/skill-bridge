@@ -116,3 +116,8 @@ const getTutorReviewsFromDB = async (tutorProfileId: number) => {
 
    return reviews;
 };
+
+export const ReviewService = {
+   createReviewIntoDB,
+   getTutorReviewsFromDB,
+};
