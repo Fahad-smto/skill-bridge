@@ -8,6 +8,6 @@ const router = express.Router();
 router.post('/', auth(userRole.STUDENT), ReviewController.createReview);
 
 //   Public —  tutor  reviews  
-
+router.get('/tutor/:tutorProfileId', ReviewController.getTutorReviews);
 
 export const ReviewRoutes = router;
