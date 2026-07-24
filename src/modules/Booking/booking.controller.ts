@@ -29,7 +29,28 @@ const createBooking = async (req: Request, res: Response) => {
 // ─────────────────────────────────────────
 // GET /api/v1/booking
 // ─────────────────────────────────────────
+const getMyBookings = async (req: Request, res: Response) => {
+   try {
+      const userId = req.user?.id;
+      const role = req.user?.role;
 
+      const result = await BookingService.getMyBookingsFromDB(userId, role);
+
+      sendResponse(res, {
+         statusCode: 200,
+         success: true,
+         message: 'Bookings fetched successfully',
+         data: result,
+      });
+   } catch (error: any) {
+      sendResponse(res, {
+         statusCode: 500,
+         success: false,
+         message: error.message || 'Something went wrong',
+         data: null,
+      });
+   }
+};
 
 // ─────────────────────────────────────────
 // GET /api/v1/booking/:id
