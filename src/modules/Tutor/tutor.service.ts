@@ -1,6 +1,14 @@
 import { prisma } from "../../lib/prisma";
 
+const createTutorIntoDB = async (payload: any, userId: number) => {
+   const user = await prisma.user.findUnique({
+      where: { id: userId },
+   });
+   if (!user) throw new Error('User not found');
 
+   const existingProfile = await prisma.tutorProfile.findUnique({
+      where: { userId: userId }
+   });
 
    if (existingProfile) throw new Error('Tutor profile already exists for this user');
 
