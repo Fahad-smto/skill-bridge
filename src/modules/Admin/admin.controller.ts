@@ -162,3 +162,11 @@ const getAllBookings = async (req: Request, res: Response) => {
    }
 };
 
+export const AdminController = {
+   getAllUsers,
+   updateUserStatus,
+   getAllCategories,
+   createCategory,
+   deleteCategory,
+   getAllBookings,
+};
