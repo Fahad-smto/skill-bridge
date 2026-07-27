@@ -10,6 +10,9 @@ const createBookingIntoDB = async (userId: number, payload: any) => {
         where: { id: payload.tutorProfileId }
     });
 
+    if (!tutorProfile) {
+        throw new Error('Tutor not found');
+    }
 
     // Check student is not booking themselves
     if (tutorProfile.userId === userId) {
