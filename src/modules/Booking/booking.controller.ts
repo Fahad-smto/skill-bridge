@@ -98,11 +98,7 @@ const updateBookingStatus = async (req: Request, res: Response) => {
       const role = req.user?.role;
       const { status } = req.body;
 
-      const result = await BookingService.updateBookingStatusIntoDB(
-         bookingId,
-         userId,
-         role,
-         status
+   
       );
 
       sendResponse(res, {
