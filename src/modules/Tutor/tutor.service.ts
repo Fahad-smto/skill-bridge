@@ -1,48 +1,6 @@
 import { prisma } from "../../lib/prisma";
 
-const createTutorIntoDB = async (payload: any, userId: number) => {
-   const user = await prisma.user.findUnique({
-      where: { id: userId },
-   });
-   if (!user) throw new Error('User not found');
 
-   const existingProfile = await prisma.tutorProfile.findUnique({
-      where: { userId: userId }
-   });
-
-   if (existingProfile) throw new Error('Tutor profile already exists for this user');
-
-   const result = await prisma.tutorProfile.create({
-      data: {
-         userId: userId,
-         bio: payload.bio,
-         hourlyRate: payload.hourlyRate,
-         experience: payload.experience || 0,
-         location: payload.location,
-         imageUrl: payload.imageUrl,
-         isApproved: payload.isApproved ?? true,
-         avgRating: 0,
-         totalReviews: 0,
-
-         // ✅ categoryIds থেকে categories create করো
-         categories: payload.categoryIds?.length > 0 ? {
-            create: payload.categoryIds.map((categoryId: number) => ({
-               categoryId,
-            }))
-         } : undefined,
-      },
-      include: {
-         user: {
-            select: { name: true, email: true, role: true }
-         },
-         categories: {
-            include: { category: true }
-         }
-      }
-   });
-
-   return result;
-};
 
 const getMyProfileFromDB = async (userId: number) => {
    const profile = await prisma.tutorProfile.findUnique({
