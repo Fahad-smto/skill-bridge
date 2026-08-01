@@ -172,7 +172,8 @@ const getAllCategories = async (req: Request, res: Response) => {
 
 export const TutorController = {
    createTutor,
- 
+   getMyProfile,       // ← NEW
+   updateTutorProfile, // ← NEW
    setAvailability,
    getAllTutors,
    getTutorById,
