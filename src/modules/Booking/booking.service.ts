@@ -208,3 +208,9 @@ const updateBookingStatusIntoDB = async (bookingId: number, userId: number, role
 
 
 
+export const BookingService = {
+    createBookingIntoDB,
+    getMyBookingsFromDB,
+    getBookingByIdFromDB,
+    updateBookingStatusIntoDB,
+};
