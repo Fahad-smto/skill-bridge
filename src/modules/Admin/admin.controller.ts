@@ -142,7 +142,25 @@ const deleteCategory = async (req: Request, res: Response) => {
 // ─────────────────────────────────────────
 // GET /api/v1/admin/bookings
 // ─────────────────────────────────────────
+const getAllBookings = async (req: Request, res: Response) => {
+   try {
+      const result = await AdminService.getAllBookingsFromDB();
 
+      sendResponse(res, {
+         statusCode: 200,
+         success: true,
+         message: 'Bookings fetched successfully',
+         data: result,
+      });
+   } catch (error: any) {
+      sendResponse(res, {
+         statusCode: 500,
+         success: false,
+         message: error.message || 'Something went wrong',
+         data: null,
+      });
+   }
+};
 
 export const AdminController = {
    getAllUsers,
