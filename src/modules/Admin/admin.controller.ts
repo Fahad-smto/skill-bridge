@@ -108,36 +108,7 @@ const createCategory = async (req: Request, res: Response) => {
 // ─────────────────────────────────────────
 // DELETE /api/v1/admin/categories/:id
 // ─────────────────────────────────────────
-const deleteCategory = async (req: Request, res: Response) => {
-   try {
-      const categoryId = parseInt(req.params.id as string);
 
-      if (isNaN(categoryId)) {
-         return sendResponse(res, {
-            statusCode: 400,
-            success: false,
-            message: 'Invalid category id',
-            data: null,
-         });
-      }
-
-      const result = await AdminService.deleteCategoryFromDB(categoryId);
-
-      sendResponse(res, {
-         statusCode: 200,
-         success: true,
-         message: 'Category deleted successfully',
-         data: result,
-      });
-   } catch (error: any) {
-      sendResponse(res, {
-         statusCode: 500,
-         success: false,
-         message: error.message || 'Something went wrong',
-         data: null,
-      });
-   }
-};
 
 // ─────────────────────────────────────────
 // GET /api/v1/admin/bookings
